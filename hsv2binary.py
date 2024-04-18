@@ -1,4 +1,5 @@
 import os
+import numpy as np
 from PIL import Image
 import colorsys
 
@@ -75,8 +76,19 @@ if __name__ == '__main__':
             try:
                 # 过滤图片并保存到输出文件夹
                 filtered_image = filter_by_hsv(input_path, hsv_lower, hsv_upper, hsv_lower2, hsv_upper2)
+
+                # 转换为numpy数组
+                np_image = np.array(filtered_image)
+                # 统计每一列中非黑色像素的数量
+                non_black_pixels_count = np.sum(np_image.sum(axis=2) > 0, axis=0)
+                print(f"文件: {filename}")
+                for col, count in enumerate(non_black_pixels_count, start=1):
+                    print(f"第{col}列非黑色像素数量: {count}")
+
                 # filtered_image.show()  # 显示二值图像
                 filtered_image.save(output_path)
                 print(f"已处理并保存: {output_path}")
             except Exception as e:
                 print(f"处理失败: {filename}, 错误: {e}")
+
+            break  # 只处理第一张图片
